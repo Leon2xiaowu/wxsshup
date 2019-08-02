@@ -1,0 +1,25 @@
+{
+  "name": "wxsshup",
+  "version": "1.0.0",
+  "description": "wxss hot update by juesify ui",
+  "main": "index.js",
+  "scripts": {
+    "test": "noop"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Leon2xiaowu/wxss.git"
+  },
+  "keywords": [
+    "wxss"
+  ],
+  "author": "LeonWu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Leon2xiaowu/wxss/issues"
+  },
+  "homepage": "https://github.com/Leon2xiaowu/wxss#readme",
+  "devDependencies": {
+    "himalaya": "^1.1.0"
+  }
+}
