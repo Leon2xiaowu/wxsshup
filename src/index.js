@@ -4,7 +4,7 @@ const ignoreList  = ['import'] // , 'block'
 
 const syncObj = 'cloudStyle'
 
-/** 
+/**
  * 解析逻辑运算和三目运算中的类
  *
  * @param {*} params
@@ -66,7 +66,7 @@ function setAttribute(className, oStyle) {
 function pAttribute(attrs) {
   const attr = attrs || [] // 属性里拿tg
   // debugger
-  let className 
+  let className
   let style
 
   for (let index = 0; index < attr.length; index++) {
@@ -93,12 +93,12 @@ function pAttribute(attrs) {
  * @param {*} list
  * @returns
  */
-function progress(list) {
+export function progress(list) {
   return list.map(node => {
     if (ignoreList.indexOf(node.tagName) !== -1) return node
 
     if (node.attributes) {
-      const res = pAttribute(node.attributes) 
+      const res = pAttribute(node.attributes)
       const {style, index} = res
 
       if (index != null) {
@@ -106,16 +106,16 @@ function progress(list) {
       } else {
         node.attributes.push(style)
       }
-    }  
-    
+    }
+
     if (node.children && node.children.length) {
       node.children = progress(node.children)
     }
-    
+
     return node
   })
 }
 
-const hotupdate = progress(parseResult);
+// const hotupdate = progress(parseResult);
 
 // console.log(JSON.stringify(hotupdate));
