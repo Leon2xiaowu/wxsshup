@@ -7,7 +7,8 @@ Page({
     motto: 'Hello World',
     userInfo: {},
     hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
+    canIUse: wx.canIUse('button.open-type.getUserInfo'),
+    cloudStyle:{}
   },
   //事件处理函数
   bindViewTap: function() {
@@ -42,6 +43,8 @@ Page({
         }
       })
     }
+
+    this.connectStyleService()
   },
   getUserInfo: function(e) {
     console.log(e)
@@ -50,5 +53,38 @@ Page({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
     })
+  },
+  /**
+   * 通过ws连接动态调整UI服务
+   *
+   */
+  connectStyleService() {
+    wx.connectSocket({
+      // 192.168.123.75
+      url: 'ws://localhost:3000/listener',
+      // header:{
+      //   'content-type': 'application/json'
+      // },
+      // protocols: ['protocol1'],
+      method:"GET"
+    })
+    wx.onSocketMessage(this.updateStyle.bind(this))
+  },
+
+  updateStyle(style) {
+    if (!style) return
+
+    console.log('收到了样式更新的消息',style)
+
+    try {
+      const s = JSON.parse((style.data || {}))
+
+      this.setData({
+        cloudStyle:s
+      })
+
+    } catch (error) {
+      console.error('接收到了错误的数据结构',error);
+    }
   }
 })
