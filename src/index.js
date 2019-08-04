@@ -48,7 +48,8 @@ function setAttribute(className, oStyle) {
   // ["single-ellipsis", "", "", "text"]
   const value = names.map((c) => {
     c = c.trim()
-    return c ? `cloudStyle["${c}"];` : ' '
+    // 分号不能放在style里面
+    return c ? `cloudStyle["${c}"]` : ' '
   })
 
   oStyle = oStyle || ''
