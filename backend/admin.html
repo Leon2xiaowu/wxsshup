@@ -14,7 +14,15 @@
       <h1 class="title">小程序UI调试好用工具</h1>
     </div>
   </section>
+
   <section class="section">
+    <div class="field">
+      <label class="label">WebSocket地址</label>
+      <div class="control">
+        <input class="input is-rounded" type="text" placeholder="ws://110.121.60.36:3736/superspider/uisocket/updater" id="J_wsPath">
+      </div>
+    </div>
+
     <div class="tile is-ancestor">
       <div class="tile is-6 is-vertical is-parent">
         <div class="tile is-child box">
@@ -68,7 +76,8 @@
 
 
 <script>
-  var wss = new WebSocket('ws://localhost:3000/updater');
+  var ssHref = getQueryString('sspath')
+  var wss
 
   function getDom(selector) {
     return document.querySelector(selector)
@@ -81,7 +90,17 @@
   var classStyleCtx = getDom('#J_classValue')
   var classStyleTotal = getDom('#J_total')
 
+  var wsHref = getDom('#J_wsPath')
+
+  wsHref.value = ssHref
+
   var styles = {}
+
+  function getQueryString(name, url) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = (url ? "?" + url : location.search).substr(1).match(reg);
+    return r && r[2] ? decodeURIComponent(r[2]) : "";
+  }
 
   function getStyleValue() {
     var name = classNameCtx.value.trim()
@@ -102,24 +121,24 @@
     classStyleTotal.value = JSON.stringify(styles, null, 2)
   }
 
-  // 打开WebSocket连接后立刻发送一条消息:
-  // wss.onmessage('open', function () {
-  //   // wss.send(JSON.stringify({
-  //   //   'container':'background-color: red;'
-  //   // }))
-  // })
-
-  wss.onopen = function (e) {
-    console.log('建立连接');
-  }
-
   appendStyle.addEventListener('click', getStyleValue)
 
   updateStyle.addEventListener('click', function () {
-    wss.send(JSON.stringify(styles))
+    const href = wsHref.value
+
+    if (wss) {
+      wss.send(JSON.stringify(styles))
+    } else if(!href) {
+      alert('WebSocket地址不能为空')
+    } else {
+      wss = new WebSocket(href);
+      wss.onopen = function() {
+        wss.send(JSON.stringify(styles))
+      }
+    }
   })
 
-  window.addEventListener('beforeunload', function(e) {
+  window.addEventListener('beforeunload', function (e) {
     e = e || window.event;
 
     if (Object.keys(styles).length) {
