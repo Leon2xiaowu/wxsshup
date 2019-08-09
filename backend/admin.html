@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UI调试工具</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+</head>
+
+<body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">小程序UI调试好用工具</h1>
+    </div>
+  </section>
+  <section class="section">
+    <div class="tile is-ancestor">
+      <div class="tile is-6 is-vertical is-parent">
+        <div class="tile is-child box">
+          <p class="title">添加修改样式</p>
+          <!-- 表单 -->
+          <div class="field">
+            <label class="label">ClassName</label>
+            <div class="control">
+              <!-- is-danger  -->
+              <input class="input class-name" type="text" placeholder="" id="J_className">
+            </div>
+            <!-- 非法名称 -->
+            <!-- <p class="help is-danger class-name">This classname is required</p> -->
+          </div>
+
+          <div class="field">
+            <label class="label">StyleValue</label>
+            <div class="control">
+              <textarea class="textarea" placeholder="" id="J_classValue"></textarea>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <button class="button is-primary" id="J_append">
+                添加
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tile is-parent">
+        <div class="tile is-child box">
+          <p class="title">更新样式</p>
+          <div class="field">
+            <div class="control">
+              <textarea class="textarea" placeholder="" rows="9" id="J_total"></textarea>
+            </div>
+          </div>
+          <div class="field">
+            <div class="control">
+              <button class="button is-primary" id="J_update">
+                更新
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+</body>
+
+
+<script>
+  var wss = new WebSocket('ws://localhost:3000/updater');
+
+  function getDom(selector) {
+    return document.querySelector(selector)
+  }
+
+  var appendStyle = getDom('#J_append')
+  var updateStyle = getDom('#J_update')
+
+  var classNameCtx = getDom('#J_className')
+  var classStyleCtx = getDom('#J_classValue')
+  var classStyleTotal = getDom('#J_total')
+
+  var styles = {}
+
+  function getStyleValue() {
+    var name = classNameCtx.value.trim()
+    var value = classStyleCtx.value.trim()
+
+    var sv = ''
+
+    if (name && value) {
+      !/;$/.test(value) && (value = value + ';')
+
+      sv = value.split('\n').map(function (line) {
+        return /;$/.test(line) ? line : line + ';'
+      }).join('')
+
+      styles[name] = sv
+    }
+
+    classStyleTotal.value = JSON.stringify(styles, null, 2)
+  }
+
+  // 打开WebSocket连接后立刻发送一条消息:
+  // wss.onmessage('open', function () {
+  //   // wss.send(JSON.stringify({
+  //   //   'container':'background-color: red;'
+  //   // }))
+  // })
+
+  wss.onopen = function (e) {
+    console.log('建立连接');
+  }
+
+  appendStyle.addEventListener('click', getStyleValue)
+
+  updateStyle.addEventListener('click', function () {
+    wss.send(JSON.stringify(styles))
+  })
+
+  window.addEventListener('beforeunload', function(e) {
+    e = e || window.event;
+
+    if (Object.keys(styles).length) {
+      e.returnValue = '系统可能不会保存您所做的更改。';
+    }
+
+    return ''
+  })
+
+</script>
+
+</html>
