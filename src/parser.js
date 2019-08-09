@@ -48,7 +48,7 @@ export function convert (path) {
       collapseInlineTagWhitespace: true,
       collapseWhitespace: true
     })
-
+    // FIXME: parse 无法正确解析 <image /> 类似的标签
     resolve(parse(result))
   })
 }
