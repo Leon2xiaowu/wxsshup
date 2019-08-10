@@ -1,7 +1,7 @@
 import {parse, stringify} from 'himalaya'
 import fs from 'fs'
 
-var minify = require('html-minifier').minify;
+// var minify = require('html-minifier').minify;
 
 
 /**
@@ -44,12 +44,12 @@ export function convert (path) {
 
     let html = fs.readFileSync(path, { encoding: 'utf8' })
 
-    var result = minify(html,{
-      collapseInlineTagWhitespace: true,
-      collapseWhitespace: true
-    })
+    // var result = minify(html,{
+    //   collapseInlineTagWhitespace: true,
+    //   collapseWhitespace: true
+    // })
 
-    resolve(parse(result))
+    resolve(parse(html))
   })
 }
 
@@ -66,7 +66,7 @@ export function writeWxml(atsTree,path) {
 
     if (!atsTree) reject(new Error('ast object is required'))
     if (!path) reject(new Error('path is required'))
-
+    // FIXME: 在还原input时，会缺省闭合标签，小程序下解析会异常
     const wxml = stringify(atsTree)
 
     fs.writeFileSync(path,wxml)

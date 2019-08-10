@@ -47,7 +47,7 @@ function setAttribute(className, oStyle) {
   const value = names.map((c) => {
     c = c.trim()
     // 分号不能放在style里面
-    return c ? `${syncObj}["${c}"]` : ' '
+    return c ? `{{${syncObj}["${c}"]}}` : ' '
   })
 
   oStyle = oStyle || ''
@@ -57,7 +57,7 @@ function setAttribute(className, oStyle) {
 
   return {
     "key":"style",
-    "value": styleValue.length ? `{{${styleValue}}} ${oStyle}` : ''
+    "value": styleValue.length ? `${styleValue} ${oStyle}` : ''
   }
 }
 
@@ -97,14 +97,7 @@ export function progress(list) {
     if (ignoreList.indexOf(node.tagName) !== -1) return node
 
     if (node.attributes) {
-      const res = pAttribute(node.attributes)
-      const {style, index} = res
-
-      if (index != null) {
-        node.attributes[index] = style
-      } else {
-        node.attributes.push(style)
-      }
+      progressAtrs(node);
     }
 
     if (node.children && node.children.length) {
@@ -115,6 +108,20 @@ export function progress(list) {
   })
 }
 
+
+function progressAtrs(node) {
+  const res = pAttribute(node.attributes);
+  const { style = {}, index } = res;
+
+  if (style.value.trim() === '') return
+
+  if (index != null) {
+    node.attributes[index] = style;
+  }
+  else {
+    node.attributes.push(style);
+  }
+}
 // const hotupdate = progress(parseResult);
 
 // console.log(JSON.stringify(hotupdate));
