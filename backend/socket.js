@@ -8,7 +8,6 @@ let listener = null
 // 服务器被客户端连接
 wssListener.on('connection', (ws,req) => {
   // 通过 ws 对象，就可以获取到客户端发送过来的信息和主动推送信息给客户端
-  console.log(`[Listener SERVER] connection()`, req)
   const url = req.url
 
   if (url === '/listener') {
@@ -23,10 +22,11 @@ wssListener.on('connection', (ws,req) => {
 function sendMsgToClient(ws) {
   ws && ws.on('message', (msg) => {
     console.log('获得Updater传来的数据',msg);
-    listener.send(msg)
+    listener && listener.send(msg)
   })
 }
 
+console.log(`[Listener SERVER] ws://localhost:3000/updater`)
 
 
 // wssListener.on('close', () => {

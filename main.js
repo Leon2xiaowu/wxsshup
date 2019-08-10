@@ -4,8 +4,8 @@ import {progress} from './src/index';
 
 const resolve = (p) => path.resolve(__dirname, p)
 
-const WXML_PATH = resolve('./wxapp/pages/index/index.wxml')
-const WXML_BUILD = resolve('./build/index.wxml')
+const WXML_PATH = resolve('./test.wxml')
+const WXML_BUILD = resolve('./build/test.wxml')
 
 async function prase() {
   try {
