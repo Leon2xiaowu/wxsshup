@@ -1,5 +1,9 @@
 const fs = require('fs')
-const {parse, stringify} = require('himalaya')
+const {
+  parse,
+  stringify
+} = require('himalaya')
+const mkdirp = require('mkdirp');
 
 // var minify = require('html-minifier').minify;
 
@@ -12,7 +16,7 @@ const {parse, stringify} = require('himalaya')
  * @param {*} tree
  * @returns
  */
-function toProcessAST (tree) {
+function toProcessAST(tree) {
   return tree.reduce((previous, node) => {
     if (node.type === 'element') {
       node.tagName = convertTag(node.tagName) // 映射tag标签
@@ -23,11 +27,13 @@ function toProcessAST (tree) {
       // TODO: template 要特殊处理，手动插入children
     }
 
-    return node.content != null
-      ? node.content.length
-        ? previous.concat(node) // 底层文本节点不为空
-        : previous // 底层文本节点为空
-      : previous.concat(node) // 非对底层文本节点
+    return node.content != null ?
+      node.content.length ?
+      previous.concat(node) // 底层文本节点不为空
+      :
+      previous // 底层文本节点为空
+      :
+      previous.concat(node) // 非对底层文本节点
   }, [])
 }
 
@@ -38,11 +44,13 @@ function toProcessAST (tree) {
  * @param {*} path
  * @returns
  */
-function convert (path) {
+function convert(path) {
   return new Promise((resolve, reject) => {
     if (!path) reject(new Error('path be necessary when convert wxml to vue template'))
 
-    let html = fs.readFileSync(path, { encoding: 'utf8' })
+    let html = fs.readFileSync(path, {
+      encoding: 'utf8'
+    })
 
     // var result = minify(html,{
     //   collapseInlineTagWhitespace: true,
@@ -61,8 +69,8 @@ function convert (path) {
  * @param {*} path
  * @returns
  */
-function writeWxml(atsTree,path) {
-  return new Promise((resolve, reject) => {
+function writeWxml(atsTree, path) {
+  return new Promise(async (resolve, reject) => {
 
     if (!atsTree) reject(new Error('ast object is required'))
     if (!path) reject(new Error('path is required'))
@@ -72,11 +80,50 @@ function writeWxml(atsTree,path) {
       'embed', 'hr', 'img', 'keygen', 'link',
       'meta', 'param', 'source', 'track', 'wbr'
     ]
-    const wxml = stringify(atsTree, {voidTags})
+    const wxml = stringify(atsTree, {
+      voidTags
+    })
 
-    fs.writeFileSync(path,wxml)
+    await ensureDescriptor(path.replace(/[\\\/][\w\.]+[^\\\/]$/, ''))
+
+    await writeHandle(path, wxml)
 
     resolve()
+  });
+}
+
+/**
+ * 保证输出路径的有效性
+ *
+ * @param {*} path
+ * @returns
+ */
+function ensureDescriptor(path) {
+  return new Promise((resolve, reject) => {
+    if (fs.existsSync(path)) {
+      resolve()
+    } else {
+      mkdirp(path, function (err) {
+        if (err) reject(err)
+        resolve()
+      });
+    }
+  });
+}
+
+/**
+ * 向目标输出路径写入数据
+ *
+ * @param {*} path
+ * @param {*} wxml
+ * @returns
+ */
+function writeHandle(path, wxml) {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(path, wxml, (err) => {
+      if (err) reject(err);
+      resolve()
+    });
   });
 }
 
