@@ -2,7 +2,15 @@
   "name": "wxsshup",
   "version": "1.0.0",
   "description": "wxss hot update by juesify ui",
-  "main": "index.js",
+  "bin": {
+    "hotwxss": "bin/hotwxss.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "LICENSE"
+  ],
+  "main": "bin/hotwxss.js",
   "scripts": {
     "dev": "babel-node main.js",
     "test": "noop"
@@ -24,10 +32,13 @@
     "@babel/core": "^7.4.5",
     "@babel/node": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
-    "himalaya": "^1.1.0",
     "html-minifier": "^4.0.0",
     "standard": "^12.0.1",
     "ws": "^7.1.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "commander": "^3.0.0",
+    "himalaya": "^1.1.0"
+  }
 }

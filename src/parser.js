@@ -1,5 +1,5 @@
-import {parse, stringify} from 'himalaya'
-import fs from 'fs'
+const fs = require('fs')
+const {parse, stringify} = require('himalaya')
 
 // var minify = require('html-minifier').minify;
 
@@ -12,7 +12,7 @@ import fs from 'fs'
  * @param {*} tree
  * @returns
  */
-export function toProcessAST (tree) {
+function toProcessAST (tree) {
   return tree.reduce((previous, node) => {
     if (node.type === 'element') {
       node.tagName = convertTag(node.tagName) // 映射tag标签
@@ -38,7 +38,7 @@ export function toProcessAST (tree) {
  * @param {*} path
  * @returns
  */
-export function convert (path) {
+function convert (path) {
   return new Promise((resolve, reject) => {
     if (!path) reject(new Error('path be necessary when convert wxml to vue template'))
 
@@ -61,7 +61,7 @@ export function convert (path) {
  * @param {*} path
  * @returns
  */
-export function writeWxml(atsTree,path) {
+function writeWxml(atsTree,path) {
   return new Promise((resolve, reject) => {
 
     if (!atsTree) reject(new Error('ast object is required'))
@@ -76,5 +76,11 @@ export function writeWxml(atsTree,path) {
 
     fs.writeFileSync(path,wxml)
 
+    resolve()
   });
 }
+
+
+exports.toProcessAST = toProcessAST
+exports.convert = convert
+exports.writeWxml = writeWxml

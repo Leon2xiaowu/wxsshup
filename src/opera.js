@@ -1,6 +1,9 @@
+const {convert, writeWxml} = require('./parser')
+const {cer, suc, out} = require('../tools/log')
+
 const ignoreList  = ['import'] // , 'block'
 
-const syncObj = 'cloudStyle'
+let syncObj = 'cloudStyle'
 
 /**
  * 解析逻辑运算和三目运算中的类
@@ -92,7 +95,7 @@ function pAttribute(attrs) {
  * @param {*} list
  * @returns
  */
-export function progress(list) {
+function progress(list) {
   return list.map(node => {
     if (ignoreList.indexOf(node.tagName) !== -1) return node
 
@@ -125,3 +128,23 @@ function progressAtrs(node) {
 // const hotupdate = progress(parseResult);
 
 // console.log(JSON.stringify(hotupdate));
+
+async function prase(option) {
+  try {
+    const {input, output, styleVar} = option
+
+    syncObj = styleVar || syncObj
+
+    const ats = await convert(input)
+    const result = await progress(ats)
+
+    await writeWxml(result, output)
+    suc(`文件 [${input}]`)
+    out(output)
+    // console.log(JSON.stringify(result));
+  } catch (error) {
+    cer(error);
+  }
+}
+
+exports.run = prase
