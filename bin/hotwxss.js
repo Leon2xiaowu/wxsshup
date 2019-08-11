@@ -35,7 +35,6 @@ if (!hasWxml) {
 const inputFile = resolve(firstArgv)
 const fileName = firstArgv.replace(/^.*[\\\/]/, '')
 // ${fileName}
-// TODO: verify path already
 const defaultOpt = program.cover ? inputFile : resolve(`./STDOUT/${fileName}`)
 const outputFile = program.output || defaultOpt
 

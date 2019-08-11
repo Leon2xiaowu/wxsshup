@@ -6,11 +6,11 @@ const errorTips = function(doc) {
 }
 
 const finishTips = function (doc) {
-  log(chalk.bgGreen('Success: '), doc)
+  log(chalk.green('Success: '), doc)
 }
 
 const outFileTips = function(doc) {
-  log(chalk.bgCyan('Output File Path: '))
+  log(chalk.cyan('Output File Path: '))
   log('')
   log(doc)
 }
