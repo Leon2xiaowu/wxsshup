@@ -64,31 +64,6 @@ function setAttribute(className, oStyle) {
   }
 }
 
-
-function pAttribute(attrs) {
-  const attr = attrs || [] // 属性里拿tg
-  // debugger
-  let className
-  let style
-
-  for (let index = 0; index < attr.length; index++) {
-    const element = attr[index]
-    const  key = element.key
-    const value = element.value
-
-    key === 'class' && (className = {value, index})
-    key === 'style' && (style = {value, index})
-
-    // if (className != null  && style != null) break
-  }
-  className = className || {}
-  style = style || {}
-  return {
-    style: setAttribute(className.value, style.value),
-    index: style.index
-  }
-}
-
 /**
  * 处理抽象语法树
  *
@@ -111,20 +86,92 @@ function progress(list) {
   })
 }
 
+/**
+ * 查找满足条件的标签属性
+ * 如果有同名属性出现N次
+ * 只会取最后一次的值做处理
+ *
+ * @param {*} attrs
+ * @returns
+ */
+function findTargetAttr(attrs) {
+  attrs = attrs || []
 
+  const targetAttr = ['class', 'style', 'data']
+  const result = {}
+
+  attrs.forEach((attribute, index) => {
+    const key = attribute.key
+    if (targetAttr.indexOf(key) !== -1) {
+      result[key] = {
+        index,
+        value: attribute.value
+      }
+    }
+  });
+
+  return result
+}
+
+/**
+ * 处理标签的属性
+ *
+ * @param {*} node
+ */
 function progressAtrs(node) {
-  const res = pAttribute(node.attributes);
-  const { style = {}, index } = res;
+  const targets = findTargetAttr(node.attributes)
 
-  if (style.value.trim() === '') return
+  handleStyles(node, targets.class, targets.style)
 
-  if (index != null) {
-    node.attributes[index] = style;
-  }
-  else {
-    node.attributes.push(style);
+  pTemplateLabel(node, targets.data)
+
+}
+
+/**
+ * 对有Class的标签元素进行行内Style赋值
+ *
+ * @param {*} node
+ * @param {*} classNames
+ * @param {*} [styles={}]
+ */
+function handleStyles(node, classNames, styles={}) {
+  if (!classNames) return
+
+  const styleIndex = styles.index
+  const styleValue = setAttribute(classNames.value, styles.value)
+
+  if (styleValue.value.trim() === '') return
+
+  if (styleIndex != null) {
+    node.attributes[styleIndex] = styleValue
+  } else {
+    node.attributes.push(styleValue)
   }
 }
+
+/**
+ * 为小程序模板添加data
+ * 便于更新数据
+ * @param {*} node
+ * @param {*} [data={}]
+ */
+function pTemplateLabel(node, data={}) {
+  if (node.tagName !== 'template') return
+
+  const indexByAttr = data.index
+
+  const newData = (data.value||'').replace(/,*}}$/, `,${syncObj}}}`)
+
+  if (indexByAttr != null) {
+    node.attributes[indexByAttr].value = newData
+  } else {
+    node.attributes.push({
+      key: "data",
+      value: `{{${syncObj}}}`
+    })
+  }
+}
+
 // const hotupdate = progress(parseResult);
 
 // console.log(JSON.stringify(hotupdate));
