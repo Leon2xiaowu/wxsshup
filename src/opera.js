@@ -5,6 +5,8 @@ const ignoreList  = ['import'] // , 'block'
 
 let syncObj = 'cloudStyle'
 
+const _wxDefinLabel = ["movable-view","cover-image","cover-view","movable-area","movable-view","scroll-view","swiper","swiper-item","swiper","view","icon","progress","rich-text","text","button","checkbox","checkbox-group","checkbox","editor","form","input","label","picker","picker-view","picker-view-column","radio","radio-group","radio","slider","switch","textarea","functional-page-navigator","navigator","audio","camera","image","live-player","live-pusher","video","map","canvas","web-view","ad","official-account","open-data","native-component","aria-component"]
+
 /**
  * 解析逻辑运算和三目运算中的类
  *
@@ -52,11 +54,10 @@ function setAttribute(className, oStyle) {
     // 分号不能放在style里面
     return c ? `{{${syncObj}["${c}"]}}` : ' '
   })
-
-  oStyle = oStyle || ''
+  // fixed single quote parser except
+  oStyle = (oStyle || '').replace(/['"]/g, '"')
 
   const styleValue = value.join('').trim()
-
 
   return {
     "key":"style",
@@ -125,6 +126,8 @@ function progressAtrs(node) {
 
   pTemplateLabel(node, targets.data)
 
+  pComponent(node)
+
 }
 
 /**
@@ -170,6 +173,23 @@ function pTemplateLabel(node, data={}) {
       value: `{{${syncObj}}}`
     })
   }
+}
+
+/**
+ * 对非小程序官方定义的组件
+ * 增加props
+ *
+ * @param {*} node
+ */
+function pComponent(node) {
+  const tagName = node.tagName
+
+  if (_wxDefinLabel.indexOf(tagName) !== -1) return
+
+  node.attributes.push({
+    key: syncObj,
+    value: `{{${syncObj}}}`
+  })
 }
 
 // const hotupdate = progress(parseResult);
