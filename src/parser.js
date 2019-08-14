@@ -5,6 +5,21 @@ const {
 } = require('himalaya')
 const mkdirp = require('mkdirp');
 
+const {
+  voidTags,
+  closingTags,
+  childlessTags,
+  closingTagAncestorBreakers
+} = require('./tags')
+
+const himalayaConfig = {
+  voidTags,
+  closingTags,
+  childlessTags,
+  closingTagAncestorBreakers,
+  includePositions: false
+}
+
 // var minify = require('html-minifier').minify;
 
 
@@ -57,7 +72,7 @@ function convert(path) {
     //   collapseWhitespace: true
     // })
 
-    resolve(parse(html))
+    resolve(parse(html, himalayaConfig))
   })
 }
 
@@ -75,14 +90,7 @@ function writeWxml(atsTree, path) {
     if (!atsTree) reject(new Error('ast object is required'))
     if (!path) reject(new Error('path is required'))
     // fixed 在还原input时，会缺省闭合标签，小程序下解析会异常
-    const voidTags = [
-      '!doctype', 'area', 'base', 'br', 'col', 'command',
-      'embed', 'hr', 'img', 'keygen', 'link',
-      'meta', 'param', 'source', 'track', 'wbr'
-    ]
-    const wxml = stringify(atsTree, {
-      voidTags
-    })
+    const wxml = stringify(atsTree, himalayaConfig)
 
     await ensureDescriptor(path.replace(/[\\\/][\w\.]+[^\\\/]$/, ''))
 
