@@ -10,8 +10,6 @@ const {run} = require('../src/opera')
 const {cer}  =require('../tools/log')
 const {openSocket} = require('../backend/socket')
 
-const log = console.log;
-
 const resolve = (p) => path.resolve(__dirname, '../', p)
 
 program
@@ -25,31 +23,29 @@ program.usage('<input .wxml files> [options]')
 program.parse(process.argv);
 
 const firstArgv = process.argv[2]
-const hasWxml = /.wxml$/.test(firstArgv||'')
 
-if (!hasWxml) {
-  program.outputHelp()
-  log('')
-  cer('input file must be .wxml')
-  return
-}
+const isFolderModal = program.folder
 
 const inputFile = resolve(firstArgv)
-const fileName = firstArgv.replace(/^.*[\\\/]/, '')
-// ${fileName}
-const defaultOpt = program.cover ? inputFile : resolve(`./STDOUT/${fileName}`)
+
+const defaultOpt = program.cover ? inputFile : resolve(`./STDOUT`)
 const outputFile = program.output || defaultOpt
 
 async function main() {
-  await run({
-    input: inputFile,
-    output: outputFile,
-    styleVar: program.style
-  })
+  try {
+    await run({
+      input: inputFile,
+      output: outputFile,
+      styleVar: program.style,
+      isFolderModal
+    })
 
-  openSocket({
-    port: program.port
-  })
+    openSocket({
+      port: program.port
+    })
+  } catch (error) {
+    cer(error)
+  }
 }
 
 main()

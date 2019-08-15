@@ -1,5 +1,8 @@
+const fs = require('fs')
 const {convert, writeWxml} = require('./parser')
-const {cer, suc, out} = require('../tools/log')
+const {suc, out} = require('../tools/log')
+
+const {getFileName,isWxmlFile} = require('../tools/helper')
 
 const ignoreList  = ['import'] // , 'block'
 
@@ -192,25 +195,83 @@ function pComponent(node) {
   })
 }
 
-// const hotupdate = progress(parseResult);
+/**
+ * Processing the .wxml file
+ *
+ * @param {*} input
+ * @param {*} outPath
+ */
+async function parseHandle(input, outPath) {
+  outPath = `${outPath}/${getFileName(input)}`
 
-// console.log(JSON.stringify(hotupdate));
+  const ats = await convert(input);
+  const result = await progress(ats);
+  await writeWxml(result, outPath);
 
+  suc(`文件 [${input}]`);
+  out(outPath);
+}
+
+/**
+ * Determine if it is a directory
+ *
+ * @param {*} curPath
+ * @returns
+ */
+function isDirectory(curPath) {
+  return fs.lstatSync(curPath).isDirectory()
+}
+
+let queue = []
+
+/**
+ * Processing files under the directory
+ *
+ * @param {*} path input file or folder
+ * @param {*} output build output folder directory
+ */
+async function folderParse(path, output) {
+  // file
+  if (!isDirectory(path)) {
+    if (!isWxmlFile(path)) {
+      throw new Error('input file must be .wxml')
+    }
+    queue.push(parseHandle(path, output))
+  } else if (fs.existsSync(path)) {
+    // folder
+    fs.readdirSync(path).forEach(function(file){
+      const curPath = path + "/" + file;
+      const nextOutput = output + "/" + file;
+
+      if (isDirectory(curPath)) { // folder
+        folderParse(curPath, nextOutput);
+      } else if(isWxmlFile(curPath)){ // file
+        queue.push(parseHandle(curPath, output))
+      }
+    });
+  } else {
+    throw new Error(`no such file or directory「${path} 」`)
+  }
+
+  await Promise.all(queue)
+
+  queue.length = 0
+}
+
+/**
+ * main function width add inline style
+ *
+ * @param {*} option
+ */
 async function prase(option) {
   try {
     const {input, output, styleVar} = option
 
     syncObj = styleVar || syncObj
 
-    const ats = await convert(input)
-    const result = await progress(ats)
-
-    await writeWxml(result, output)
-    suc(`文件 [${input}]`)
-    out(output)
-    // console.log(JSON.stringify(result));
+    await folderParse(input, output)
   } catch (error) {
-    cer(error);
+    throw(error)
   }
 }
 
