@@ -128,11 +128,12 @@
 
     const updateValue = JSON.parse(classStyleTotal.value)
 
-    if (wss) {
+    if (wss && wss.url === href) {
       wss.send(JSON.stringify(updateValue))
     } else if(!href) {
       alert('WebSocket地址不能为空')
     } else {
+      wss && wss.close(1000, 'updater connect the new socket serve')
       wss = new WebSocket(href);
       wss.onopen = function() {
         wss.send(JSON.stringify(updateValue))
