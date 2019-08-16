@@ -1,6 +1,6 @@
 {
   "name": "wxsshup",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "wxss hot update by juesify ui",
   "bin": {
     "hotwxss": "bin/hotwxss.js"
