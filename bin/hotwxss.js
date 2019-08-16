@@ -11,7 +11,7 @@ const {cer}  =require('../tools/log')
 const {openSocket} = require('../backend/socket')
 const {getDescriptorPath} = require('../tools/helper')
 
-const resolve = (p) => path.resolve(__dirname, '../', p)
+const resolve = (p) => path.resolve(process.cwd(), p)
 
 program
   .option('-o, --output <file>', 'Output file (default STDOUT).')
