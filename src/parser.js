@@ -20,6 +20,8 @@ const himalayaConfig = {
   includePositions: false
 }
 
+const {getDescriptorPath} = require('../tools/helper')
+
 // var minify = require('html-minifier').minify;
 
 
@@ -92,7 +94,7 @@ function writeWxml(atsTree, path) {
     // fixed 在还原input时，会缺省闭合标签，小程序下解析会异常
     const wxml = stringify(atsTree, himalayaConfig)
 
-    await ensureDescriptor(path.replace(/[\\\/][\w\.]+[^\\\/]$/, ''))
+    await ensureDescriptor(getDescriptorPath(path))
 
     await writeHandle(path, wxml)
 

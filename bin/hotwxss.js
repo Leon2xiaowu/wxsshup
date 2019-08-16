@@ -9,6 +9,7 @@ const program = require("commander")
 const {run} = require('../src/opera')
 const {cer}  =require('../tools/log')
 const {openSocket} = require('../backend/socket')
+const {getDescriptorPath} = require('../tools/helper')
 
 const resolve = (p) => path.resolve(__dirname, '../', p)
 
@@ -28,7 +29,7 @@ const isFolderModal = program.folder
 
 const inputFile = resolve(firstArgv)
 
-const defaultOpt = program.cover ? inputFile : resolve(`./STDOUT`)
+const defaultOpt = program.cover ? getDescriptorPath(inputFile) : resolve(`./STDOUT`)
 const outputFile = program.output || defaultOpt
 
 async function main() {
