@@ -19,11 +19,16 @@ program
   .option('-c, --cover', 'Cover input file (The same as -o [input file path]; -o first)')
   .option('-p, --port <number>', 'WebSocket serve listener port (default 3000)')
 
-program.usage('<input .wxml files> [options]')
+program.usage('<input path> [options]')
 
 program.parse(process.argv);
 
 const firstArgv = process.argv[2]
+
+if (!firstArgv) {
+  program.outputHelp()
+  return
+}
 
 const isFolderModal = program.folder
 
