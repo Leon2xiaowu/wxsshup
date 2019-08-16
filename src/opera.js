@@ -265,9 +265,13 @@ async function folderParse(path, output) {
  */
 async function prase(option) {
   try {
-    const {input, output, styleVar} = option
+    let {input, output, styleVar} = option
 
     syncObj = styleVar || syncObj
+
+    if (isDirectory(input)) {
+      output = output.replace(/[\\\/]$/,'') + '/' +getFileName(input)
+    }
 
     await folderParse(input, output)
   } catch (error) {
