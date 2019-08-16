@@ -33,16 +33,14 @@
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/node": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
-    "html-minifier": "^4.0.0",
-    "standard": "^12.0.1",
-    "ws": "^7.1.1"
+    "@babel/preset-env": "^7.4.5"
   },
   "dependencies": {
     "chalk": "^2.4.2",
     "commander": "^3.0.0",
     "himalaya": "^1.1.0",
     "mkdirp": "^0.5.1",
-    "open": "^6.4.0"
+    "open": "^6.4.0",
+    "ws": "^7.1.1"
   }
 }
