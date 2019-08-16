@@ -9,7 +9,8 @@
     "bin",
     "src",
     "LICENSE",
-    "tools"
+    "tools",
+    "backend"
   ],
   "main": "bin/hotwxss.js",
   "scripts": {
