@@ -3,3 +3,5 @@ exports.getFileName = function(path) {
 }
 
 exports.isWxmlFile = (path) =>  /.wxml$/.test(path||'')
+
+exports.getDescriptorPath = (path) => path.replace(/[\\\/][\w\.]+[^\\\/]$/, '')

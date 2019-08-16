@@ -24,7 +24,7 @@ function recExpression(params) {
 
   const rec = /(?:[\w\s-]*(?:&&|\|\|)\s*'([\w-]+)';*)|(?:[\w\s-\.]+>[\w\s-\.]+\?'([\w-]+)':'([\w-]+)';*)/g
 
-  return params.replace(rec,(_,g1='',g2='',g3='')=> (` ${g1} ${g2} ${g3} `))
+  return params.replace(rec,(_,g1='',g2='',g3='')=> (` ${g1} ${g2} ${g3} `)).replace(/[^\w-_\s]/g,'')
 }
 
 // const result = "footerEnterList.length > 1?'item-flex':'item-flex1'".replace(/{{(.+)}}/,(r,g1)=>{
@@ -46,7 +46,7 @@ function setAttribute(className, oStyle) {
 
   className = className.replace(/{{(.+)}}/,(_, rex)=>{
     return recExpression(rex||'')
-  })
+  }).replace(/['"]/g, '"')
 
   // console.log(className);
 
@@ -265,9 +265,13 @@ async function folderParse(path, output) {
  */
 async function prase(option) {
   try {
-    const {input, output, styleVar} = option
+    let {input, output, styleVar} = option
 
     syncObj = styleVar || syncObj
+
+    if (isDirectory(input)) {
+      output = output.replace(/[\\\/]$/,'') + '/' +getFileName(input)
+    }
 
     await folderParse(input, output)
   } catch (error) {
