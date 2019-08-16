@@ -18,6 +18,7 @@ program
   .option('-s, --style <string>', 'Hotupdate Object var (default cloudStyle)')
   .option('-c, --cover', 'Cover input file (The same as -o [input file path]; -o first)')
   .option('-p, --port <number>', 'WebSocket serve listener port (default 3000)')
+  .option('-w, --websocket', 'Automatically start WebSocket serve')
 
 program.usage('<input path> [options]')
 
@@ -30,8 +31,6 @@ if (!firstArgv) {
   return
 }
 
-const isFolderModal = program.folder
-
 const inputFile = resolve(firstArgv)
 
 const defaultOpt = program.cover ? getDescriptorPath(inputFile) : resolve(`./STDOUT`)
@@ -43,10 +42,9 @@ async function main() {
       input: inputFile,
       output: outputFile,
       styleVar: program.style,
-      isFolderModal
     })
 
-    openSocket({
+    program.websocket && openSocket({
       port: program.port
     })
   } catch (error) {
