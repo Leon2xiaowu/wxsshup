@@ -8,7 +8,8 @@
   "files": [
     "bin",
     "src",
-    "LICENSE"
+    "LICENSE",
+    "tools"
   ],
   "main": "bin/hotwxss.js",
   "scripts": {
@@ -17,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Leon2xiaowu/wxss.git"
+    "url": "https://github.com/Leon2xiaowu/wxsshup"
   },
   "keywords": [
     "wxss"
@@ -25,9 +26,9 @@
   "author": "LeonWu",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Leon2xiaowu/wxss/issues"
+    "url": "https://github.com/Leon2xiaowu/wxsshup/issues"
   },
-  "homepage": "https://github.com/Leon2xiaowu/wxss#readme",
+  "homepage": "https://github.com/Leon2xiaowu/wxsshup#readme",
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/node": "^7.4.5",
