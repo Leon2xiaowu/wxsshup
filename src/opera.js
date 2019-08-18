@@ -203,7 +203,7 @@ function pComponent(node) {
  * @param {*} outPath
  */
 async function parseHandle(input, outPath) {
-  outPath = `${outPath}/${getFileName(input)}`
+  outPath = spath.join(outPath,getFileName(input))
 
   const ats = await convert(input);
   const result = await progress(ats);
