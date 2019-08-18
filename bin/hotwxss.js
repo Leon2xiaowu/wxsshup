@@ -16,7 +16,7 @@ const resolve = (p) => path.resolve(process.cwd(), p)
 program
   .option('-o, --output <file>', 'Output file (default STDOUT).')
   .option('-s, --style <string>', 'Hotupdate Object var (default cloudStyle)')
-  .option('-c, --cover', 'Cover input file (The same as -o [input file path]; -o first)')
+  .option('-c, --cover', 'Cover input file (The same as -o [input file path]; -c first)')
   .option('-p, --port <number>', 'WebSocket serve listener port (default 3000)')
   .option('-w, --websocket', 'Automatically start WebSocket serve')
 

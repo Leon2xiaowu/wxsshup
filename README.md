@@ -40,7 +40,7 @@ output file path
 [WebSocket SERVER] ws://localhost:3003/updater
 ```
 
-Then automatically open `wxsshup/backend/admin.html` in the browser
+If there is `-w` option then automatically open `wxsshup/backend/admin.html` in the browser
 
 step 2.
 
@@ -90,6 +90,6 @@ update style on admin.html, enjoy.
 
 - `-o` **{String}** Output file path (default STDOUT), support folder directory.
 - `-s` **{String}** Hotupdate Object var (default cloudStyle).
-- `-c` **{Boolean}** Cover input file (The same as -o [input file path]; **-o first**).
+- `-c` **{Boolean}** Cover input file (The same as -o [input file path]; **-c first**).
 - `-c` **{Number}** WebSocket serve listener port (default 3000).
-
+- `-w` **{{Boolean}}** Automatically start WebSocket serve
