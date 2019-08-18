@@ -9,7 +9,7 @@ const program = require("commander")
 const {run} = require('../src/opera')
 const {cer}  =require('../tools/log')
 const {openSocket} = require('../backend/socket')
-const {getDescriptorPath} = require('../tools/helper')
+const {getDescriptorPath, isDirectory, getFileName} = require('../tools/helper')
 
 const resolve = (p) => path.resolve(process.cwd(), p)
 
@@ -33,8 +33,19 @@ if (!firstArgv) {
 
 const inputFile = resolve(firstArgv)
 
-const defaultOpt = program.cover ? getDescriptorPath(inputFile) : resolve(`./STDOUT`)
-const outputFile = program.output || defaultOpt
+const coverOutput = isDirectory(inputFile)
+  ? inputFile
+  : getDescriptorPath(inputFile)
+
+const defaultOutput = isDirectory(inputFile)
+  ? path.join(resolve(`./STDOUT`), getFileName(inputFile))
+  : resolve(`./STDOUT`)
+
+const outputFile = program.cover
+  ? coverOutput
+  : program.output
+    ? program.output
+    : defaultOutput
 
 async function main() {
   try {

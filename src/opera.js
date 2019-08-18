@@ -1,8 +1,9 @@
 const fs = require('fs')
+const spath = require('path')
 const {convert, writeWxml} = require('./parser')
 const {suc, out} = require('../tools/log')
 
-const {getFileName,isWxmlFile} = require('../tools/helper')
+const {getFileName,isWxmlFile,isDirectory} = require('../tools/helper')
 
 const ignoreList  = ['import'] // , 'block'
 
@@ -212,16 +213,6 @@ async function parseHandle(input, outPath) {
   out(outPath);
 }
 
-/**
- * Determine if it is a directory
- *
- * @param {*} curPath
- * @returns
- */
-function isDirectory(curPath) {
-  return fs.lstatSync(curPath).isDirectory()
-}
-
 let queue = []
 
 /**
@@ -240,8 +231,8 @@ async function folderParse(path, output) {
   } else if (fs.existsSync(path)) {
     // folder
     fs.readdirSync(path).forEach(function(file){
-      const curPath = path + "/" + file;
-      const nextOutput = output + "/" + file;
+      const curPath = spath.join(path, file);
+      const nextOutput = spath.join(output, file);
 
       if (isDirectory(curPath)) { // folder
         folderParse(curPath, nextOutput);
@@ -268,10 +259,6 @@ async function prase(option) {
     let {input, output, styleVar} = option
 
     syncObj = styleVar || syncObj
-
-    if (isDirectory(input)) {
-      output = output.replace(/[\\\/]$/,'') + '/' +getFileName(input)
-    }
 
     await folderParse(input, output)
   } catch (error) {
